@@ -4,23 +4,29 @@ struct FriendView: View {
     let friend: User
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
-            ProfilePictureView(urlString: friend.profilePicUrl ?? "")
-                .frame(width: 60, height: 60)
-                .clipShape(Circle())
-            
-            Text(friend.username)
-                .font(.subheadline)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            
-            ImageGridMiniView(urls: friend.imageUrls ?? [])
-                .frame(height: 80)
+        NavigationLink {
+            ProfileView(userId: friend.id ?? "")
+        } label: {
+            // Existing FriendView content
+            VStack(alignment: .center, spacing: 8) {
+                ProfilePictureView(urlString: friend.profilePicUrl ?? "")
+                    .frame(width: 60, height: 60)
+                    .clipShape(Circle())
+                
+                Text(friend.username)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                ImageGridMiniView(urls: friend.imageUrls ?? [])
+                    .frame(height: 80)
+            }
+            .padding(8)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+            .shadow(radius: 2)
         }
-        .padding(8)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .shadow(radius: 2)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -43,4 +49,3 @@ struct FriendView_Previews: PreviewProvider {
         .frame(width: 150, height: 150)
     }
 }
-

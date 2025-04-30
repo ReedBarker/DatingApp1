@@ -77,21 +77,6 @@ struct SwipeView: View {
                     EmptyStateView()
                 }
             }
-            .overlay(alignment: .topTrailing) {
-                // Temporary logout button
-                Button {
-                    authViewModel.signOut()
-                } label: {
-                    Image(systemName: "power")
-                        .padding(10)
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
-                }
-                .padding(.top, 50)
-                .padding(.trailing, 20)
-            }
             .overlay(bottomButtons, alignment: .bottom)
             .onAppear { Task { await vm.fetchUsers() } }
         }

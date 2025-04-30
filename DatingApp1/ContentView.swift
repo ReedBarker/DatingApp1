@@ -16,6 +16,11 @@ struct ContentView: View {
                         .tabItem {
                             Label("Friends", systemImage: "person.3.fill")
                         }
+                    
+                    ProfileView(userId: authViewModel.userSession?.uid ?? "")
+                        .tabItem {
+                            Label("Profile", systemImage: "person.circle")
+                        }
                 }
                 .navigationBarHidden(true)
             } else {
