@@ -29,6 +29,17 @@ final class FirestoreService {
         }
     }
     
+    func fetchUsers(withIDs ids: [String]) async throws -> [User] {
+        var users: [User] = []
+        for id in ids {
+            let document = try await db.collection(Constants.Collections.users).document(id).getDocument()
+            if let user = try? document.data(as: User.self) {
+                users.append(user)
+            }
+        }
+        return users
+    }
+    
     func fetchFriendIDs(userId: String) async throws -> [String] {
         let userRef = db.collection(Constants.Collections.users).document(userId)
         let query = db.collection(Constants.Collections.friendships)

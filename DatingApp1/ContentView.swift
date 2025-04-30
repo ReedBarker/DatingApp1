@@ -6,14 +6,23 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             if authViewModel.userSession != nil {
-                SwipeView()
-                    .environmentObject(authViewModel)
-                    .navigationBarHidden(true)
+                TabView {
+                    SwipeView()
+                        .tabItem {
+                            Label("Swipe", systemImage: "person.2")
+                        }
+                    
+                    FriendListView()
+                        .tabItem {
+                            Label("Friends", systemImage: "person.3.fill")
+                        }
+                }
+                .navigationBarHidden(true)
             } else {
                 AuthView(viewModel: authViewModel)
-                    .navigationBarHidden(true)
             }
         }
+        .environmentObject(authViewModel)
     }
 }
 

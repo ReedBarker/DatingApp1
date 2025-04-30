@@ -2,8 +2,13 @@ import SwiftUI
 
 struct ImageGridView: View {
     let urls: [String]
-    private let columns = 2
-    private let spacing: CGFloat = 0
+        let columns: Int
+        private let spacing: CGFloat = 0
+        
+        init(urls: [String], columns: Int = 2) {
+            self.urls = urls
+            self.columns = columns
+        }
 
     var body: some View {
         // match your VStack(.padding()) in UserView:

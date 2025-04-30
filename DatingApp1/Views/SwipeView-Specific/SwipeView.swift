@@ -9,92 +9,90 @@ struct SwipeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
-        NavigationStack {
-            GeometryReader { geo in
-                ZStack {
-                    Color(.systemGroupedBackground)
-                        .edgesIgnoringSafeArea(.all)
+        GeometryReader { geo in
+            ZStack {
+                Color(.systemGroupedBackground)
+                    .edgesIgnoringSafeArea(.all)
 
-                    switch true {
-                    case vm.isLoading:
-                        ProgressView()
+                switch true {
+                case vm.isLoading:
+                    ProgressView()
 
-                    case vm.errorMessage != nil:
-                        ErrorView(error: vm.errorMessage!) {
-                            Task { await vm.fetchUsers() }
-                        }
+                case vm.errorMessage != nil:
+                    ErrorView(error: vm.errorMessage!) {
+                        Task { await vm.fetchUsers() }
+                    }
 
-                    case currentIndex < vm.users.count:
+                case currentIndex < vm.users.count:
+                    UserCardView(
+                        user: vm.users[currentIndex],
+                        geo: geo,
+                        dragOffset: $dragOffset,
+                        cardRotation: $cardRotation,
+                        isDragging: $isDragging
+                    )
+                    .transition(.slide)
+                    .animation(.interactiveSpring(), value: dragOffset)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 10)
+                            .onChanged { value in
+                                let dx = value.translation.width
+                                let dy = value.translation.height
+                                if abs(dx) > abs(dy) * 3 && abs(dx) > 20 {
+                                    isDragging = true
+                                    dragOffset.width = dx
+                                    cardRotation = Double(dx / 20)
+                                }
+                            }
+                            .onEnded { value in
+                                let dx = value.translation.width
+                                let dy = value.translation.height
+                                let threshold = geo.size.width * 0.4
+                                if abs(dx) > abs(dy) * 3 && abs(dx) > threshold {
+                                    let direction: SwipeDirection = dx > 0 ? .right : .left
+                                    swipeCard(direction: direction)
+                                } else {
+                                    withAnimation(.interactiveSpring()) {
+                                        resetCardPosition()
+                                    }
+                                }
+                            }
+                    )
+                    .zIndex(1)
+
+                    if currentIndex + 1 < vm.users.count {
                         UserCardView(
-                            user: vm.users[currentIndex],
+                            user: vm.users[currentIndex + 1],
                             geo: geo,
-                            dragOffset: $dragOffset,
-                            cardRotation: $cardRotation,
-                            isDragging: $isDragging
+                            dragOffset: .constant(.zero),
+                            cardRotation: .constant(0),
+                            isDragging: .constant(false)
                         )
-                        .transition(.slide)
-                        .animation(.interactiveSpring(), value: dragOffset)
-                        .simultaneousGesture(
-                            DragGesture(minimumDistance: 10)
-                                .onChanged { value in
-                                    let dx = value.translation.width
-                                    let dy = value.translation.height
-                                    if abs(dx) > abs(dy) * 3 && abs(dx) > 20 {
-                                        isDragging = true
-                                        dragOffset.width = dx
-                                        cardRotation = Double(dx / 20)
-                                    }
-                                }
-                                .onEnded { value in
-                                    let dx = value.translation.width
-                                    let dy = value.translation.height
-                                    let threshold = geo.size.width * 0.4
-                                    if abs(dx) > abs(dy) * 3 && abs(dx) > threshold {
-                                        let direction: SwipeDirection = dx > 0 ? .right : .left
-                                        swipeCard(direction: direction)
-                                    } else {
-                                        withAnimation(.interactiveSpring()) {
-                                            resetCardPosition()
-                                        }
-                                    }
-                                }
-                        )
-                        .zIndex(1)
-
-                        if currentIndex + 1 < vm.users.count {
-                            UserCardView(
-                                user: vm.users[currentIndex + 1],
-                                geo: geo,
-                                dragOffset: .constant(.zero),
-                                cardRotation: .constant(0),
-                                isDragging: .constant(false)
-                            )
-                            .zIndex(0)
-                            .scaleEffect(0.95)
-                            .opacity(0.8)
-                        }
-
-                    default:
-                        EmptyStateView()
+                        .zIndex(0)
+                        .scaleEffect(0.95)
+                        .opacity(0.8)
                     }
+
+                default:
+                    EmptyStateView()
                 }
-                .overlay(alignment: .topTrailing) {
-                    // Temporary logout button
-                    Button {
-                        authViewModel.signOut()
-                    } label: {
-                        Image(systemName: "power")
-                            .padding(10)
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
-                    }
-                    .padding(.top, 50)
-                    .padding(.trailing, 20)
-                }
-                .overlay(bottomButtons, alignment: .bottom)
             }
+            .overlay(alignment: .topTrailing) {
+                // Temporary logout button
+                Button {
+                    authViewModel.signOut()
+                } label: {
+                    Image(systemName: "power")
+                        .padding(10)
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                }
+                .padding(.top, 50)
+                .padding(.trailing, 20)
+            }
+            .overlay(bottomButtons, alignment: .bottom)
             .onAppear { Task { await vm.fetchUsers() } }
         }
     }

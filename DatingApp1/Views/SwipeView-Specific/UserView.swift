@@ -1,5 +1,3 @@
-// UserView.swift
-
 import SwiftUI
 
 struct UserView: View {
