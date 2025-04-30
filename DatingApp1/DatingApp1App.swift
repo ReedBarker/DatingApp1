@@ -1,16 +1,9 @@
-//
-//  DatingApp1App.swift
-//  DatingApp1
-//
-//  Created by user268071 on 4/27/25.
-//
-
 import SwiftUI
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         return true
     }
@@ -26,4 +19,3 @@ struct DatingApp1App: App {
         }
     }
 }
-

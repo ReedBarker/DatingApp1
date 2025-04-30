@@ -1,28 +1,22 @@
-//
-//  UsersViewModel.swift
-//  DatingApp1
-//
-//  Created by user268071 on 4/29/25.
-//
-
 import Foundation
+import FirebaseFirestore
 
 @MainActor
 final class UsersViewModel: ObservableObject {
-    @Published private(set) var users: [User] = []
+    @Published var users: [User] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
-    
+
     func fetchUsers() async {
         isLoading = true
-        defer { isLoading = false }
-        
+        errorMessage = nil
         do {
-            self.users = try await FirestoreService.shared.fetchUsers()
-            errorMessage = nil
+            let fetched = try await FirestoreService.shared.fetchUsers()
+            users = fetched
         } catch {
             errorMessage = error.localizedDescription
         }
+        isLoading = false
     }
 }
 

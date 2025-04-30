@@ -1,10 +1,3 @@
-//
-//  Constants.swift
-//  DatingApp1
-//
-//  Created by user268071 on 4/29/25.
-//
-
 import Foundation
 
 enum Constants {

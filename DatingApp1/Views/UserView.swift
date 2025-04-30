@@ -1,39 +1,32 @@
+// UserView.swift
+
 import SwiftUI
 
 struct UserView: View {
-    @StateObject private var vm = UsersViewModel()
-    
+    let user: User
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
     var body: some View {
-        NavigationView {
-            Group {
-                if vm.isLoading {
-                    ProgressView()
-                }
-                else if let error = vm.errorMessage {
-                    VStack(spacing: 8) {
-                        Text("Error: \(error)")
-                            .foregroundColor(.red)
-                        Button("Retry") {
-                            Task { await vm.fetchUsers() }
-                        }
-                    }
-                }
-                else {
-                    ScrollView {
-                        // <-- here’s our extracted grid
-                        ImageGridView(urls: vm.users.flatMap { $0.imageUrls })
-                            .padding()
-                    }
-                }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                ProfilePictureView(urlString: user.profilePicUrl)
+                UserInfoView(username: user.username, bio: user.bio)
+                ImageGridView(urls: user.imageUrls)
             }
-            .task { await vm.fetchUsers() }
+            .padding()
         }
     }
 }
 
-struct UserImagesView_Previews: PreviewProvider {
+struct UserView_Previews: PreviewProvider {
     static var previews: some View {
-        UserView()
+        UserView(user: User(
+            id: "1",
+            username: "Jane Doe",
+            bio: "Loves hiking & photography. Passionate about outdoor adventures and capturing beautiful moments in nature.",
+            profilePicUrl: "https://example.com/profile.jpg",
+            imageUrls: Array(repeating: "https://example.com/photo.jpg", count: 6),
+            preferences: .init(darkMode: false)
+        ))
     }
 }
-
