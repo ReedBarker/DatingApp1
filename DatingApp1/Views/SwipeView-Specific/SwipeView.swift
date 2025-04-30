@@ -6,6 +6,7 @@ struct SwipeView: View {
     @State private var dragOffset: CGSize = .zero
     @State private var cardRotation: Double = 0
     @State private var isDragging = false
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationStack {
@@ -38,7 +39,6 @@ struct SwipeView: View {
                                 .onChanged { value in
                                     let dx = value.translation.width
                                     let dy = value.translation.height
-                                    // only start horizontal swipe if dx >> dy and dx exceeds a small threshold
                                     if abs(dx) > abs(dy) * 3 && abs(dx) > 20 {
                                         isDragging = true
                                         dragOffset.width = dx
@@ -78,6 +78,21 @@ struct SwipeView: View {
                         EmptyStateView()
                     }
                 }
+                .overlay(alignment: .topTrailing) {
+                    // Temporary logout button
+                    Button {
+                        authViewModel.signOut()
+                    } label: {
+                        Image(systemName: "power")
+                            .padding(10)
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    .padding(.top, 50)
+                    .padding(.trailing, 20)
+                }
                 .overlay(bottomButtons, alignment: .bottom)
             }
             .onAppear { Task { await vm.fetchUsers() } }
@@ -99,13 +114,23 @@ struct SwipeView: View {
     }
 
     private func swipeCard(direction: SwipeDirection) {
+        let swipedUserId = vm.users[currentIndex].id ?? ""
+        vm.addSwipedUser(swipedUserId)
+
         withAnimation(.easeInOut(duration: 0.3)) {
             dragOffset.width = direction == .right ? 500 : -500
             cardRotation = direction == .right ? 15 : -15
         }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             currentIndex += 1
             resetCardPosition()
+        }
+
+        if direction == .right {
+            Task {
+                try? await FirestoreService.shared.sendFriendRequest(to: swipedUserId)
+            }
         }
     }
 
@@ -116,8 +141,7 @@ struct SwipeView: View {
     }
 }
 
-// MARK: - Card View
-
+// MARK: - Supporting Views & Types
 struct UserCardView: View {
     let user: User
     let geo: GeometryProxy
@@ -134,8 +158,6 @@ struct UserCardView: View {
             .scaleEffect(isDragging ? 1.02 : 1.0)
     }
 }
-
-// MARK: - Supporting Views & Types
 
 struct SwipeButton: View {
     let systemName: String
@@ -200,9 +222,9 @@ enum SwipeDirection {
 }
 
 // MARK: - Preview
-
 struct SwipeView_Previews: PreviewProvider {
     static var previews: some View {
         SwipeView()
+            .environmentObject(AuthViewModel())
     }
 }

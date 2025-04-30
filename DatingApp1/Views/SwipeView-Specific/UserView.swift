@@ -9,9 +9,9 @@ struct UserView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                ProfilePictureView(urlString: user.profilePicUrl)
-                UserInfoView(username: user.username, bio: user.bio)
-                ImageGridView(urls: user.imageUrls)
+                ProfilePictureView(urlString: user.profilePicUrl ?? "")
+                UserInfoView(username: user.username, bio: user.bio ?? "")
+                ImageGridView(urls: user.imageUrls ?? [""])
             }
             .padding()
         }

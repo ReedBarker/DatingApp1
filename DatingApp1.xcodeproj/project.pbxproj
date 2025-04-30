@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D19863FA2DC1B70800BFB1C1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D19863F92DC1B70800BFB1C1 /* FirebaseAuth */; };
 		D1DE94DF2DC122C6005F19DA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D1DE94DE2DC122C6005F19DA /* FirebaseAnalytics */; };
 		D1DE94E12DC122C6005F19DA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D1DE94E02DC122C6005F19DA /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1DE94DF2DC122C6005F19DA /* FirebaseAnalytics in Frameworks */,
+				D19863FA2DC1B70800BFB1C1 /* FirebaseAuth in Frameworks */,
 				D1DE94E12DC122C6005F19DA /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +76,7 @@
 			packageProductDependencies = (
 				D1DE94DE2DC122C6005F19DA /* FirebaseAnalytics */,
 				D1DE94E02DC122C6005F19DA /* FirebaseFirestore */,
+				D19863F92DC1B70800BFB1C1 /* FirebaseAuth */,
 			);
 			productName = DatingApp1;
 			productReference = D14FA1512DBE1B1100D65B31 /* DatingApp1.app */;
@@ -347,6 +350,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D19863F92DC1B70800BFB1C1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D1DE94DD2DC122C6005F19DA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		D1DE94DE2DC122C6005F19DA /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D1DE94DD2DC122C6005F19DA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
